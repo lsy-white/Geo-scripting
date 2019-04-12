@@ -1,0 +1,45 @@
+#可能需要的包：gdal,rasterio,rasterio.plot----show,numpy
+
+#one way using GDAL
+	##第一步：创建空栅格数据集
+dataset=gdal.GetDriverByName("GTiff"),Create(path,cols,rows,<bands_num>,dataType) 
+	###像素值数据类型，eg.gdal.GDT_Int16
+  ###第二步，设置基本信息，如：仿射矩阵，投影。
+	###计算仿射矩阵
+geo_transform=np.zeros(6) 
+geo_transform[0]=
+geo_transform[1]=
+geo_transform[2]=
+geo_transform[3]=
+geo_transform[4]=
+geo_transform[5]=
+ 	###设置仿射矩阵
+dataset.SetGeoTransform(geo_transform)
+	###获取已有栅格数据集的投影信息
+proj=dataset0.GetProjection() 
+  	###设置新栅格数据集的投影
+dataset.SetProjection(proj) 
+  	##第三步，像素值的写
+band1=dataset.GetRasterBand(1)
+band1.WriteArray(dataset0.GetRasterBand(1).ReadAsArray(0,0,cols,rows))
+	##第四步，刷新缓存，关闭数据集
+band1.FlushCache()
+del dataset
+del dataset0
+	##最后，可打开栅格数据集
+dataset=gdal.Open(path)
+
+	#one way using Rasterio
+#rsio0是一个掩膜处理得到的文件，类型是numpy.array
+#rsio1是原栅格数据集
+new_ds_meta=rsio1.meta.copy()
+	## height,shape[1],行号；width,shape[2],列号.
+new_ds_meta.update({"height":rsio0.shape[1],
+				 "driver":"GTiff",
+				 "width":rsio0.shape[2],
+				 "transform":rsio.GetGeoTransform()})
+	 ##打开空的栅格数据集
+new_path=""
+new_ds=rasterio.open(new_path,"w",**new_ds_data) 
+	 ##写入像素值
+new_ds.write(rsio0)
